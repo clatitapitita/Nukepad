@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -61,6 +62,8 @@ class Nukepad extends JFrame implements ActionListener{
     
     Nukepad() {
         frame = new JFrame("Editor");
+        ImageIcon icon = new ImageIcon(getClass().getResource("/icons/nukepadlogo.png"));
+        frame.setIconImage(icon.getImage());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         try{
             UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
@@ -355,7 +358,7 @@ class Nukepad extends JFrame implements ActionListener{
         makeTabClosable(tabs, scroll, file.getName());
     }
 
-    private void makeTabClosable(JTabbedPane tabs, Component tab, String title) {
+   private void makeTabClosable(JTabbedPane tabs, Component tab, String title) {
     JPanel panel = new JPanel(new BorderLayout());
     panel.setOpaque(false);
 
@@ -376,6 +379,7 @@ class Nukepad extends JFrame implements ActionListener{
     panel.add(close, BorderLayout.EAST);
 
     tabs.setTabComponentAt(tabs.indexOfComponent(tab), panel);
-}
+    }
+   
 
 }
