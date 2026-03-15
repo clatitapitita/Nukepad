@@ -1,4 +1,4 @@
-# Nukepad
+# Nukepad (alpha)
 
 
 a doable text editor.
