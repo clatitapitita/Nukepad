@@ -28,7 +28,7 @@ a doable text editor.
 ## ADDITIONAL INFO:
 
 
--> This was built on top of the existing codename TEDitor architecture, so parts of the code found in the pre alpha code are still found in the new code
+-> This was built on top of the existing codename TEDitor architecture, so parts of the code found in pre alpha are still found in the new code
 
 
 -> The program, although still being in the "alpha" stage is far from release, so don't expect one anytime soon
