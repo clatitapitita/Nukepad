@@ -25,6 +25,9 @@ a doable text editor.
 ->Sepparated the "Compile" and "Run" Buttons
 
 
+(P.S, added logo.)
+
+
 ## ADDITIONAL INFO:
 
 
