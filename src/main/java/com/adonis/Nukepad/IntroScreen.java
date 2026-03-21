@@ -49,6 +49,8 @@ public class IntroScreen {
     private static final int MAX_RECENTS = 8;
     public IntroScreen() {
         introFrame = new JFrame("Welcome to Nukepad!");
+        ImageIcon icon = new ImageIcon(getClass().getResource("/icons/nukepadlogo.png"));
+        introFrame.setIconImage(icon.getImage());
         introFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         introFrame.setSize(600, 500);
         introFrame.setLocationRelativeTo(null);
@@ -65,7 +67,7 @@ public class IntroScreen {
         
         JLabel logo;
         try {
-          ImageIcon icon = new ImageIcon(getClass().getResource("/icons/nukepadlogo.png"));
+          ImageIcon logoicon = new ImageIcon(getClass().getResource("/icons/nukepadlogo.png"));
           java.awt.Image scaled = icon.getImage().getScaledInstance(80, 80, java.awt.Image.SCALE_SMOOTH);
           logo = new JLabel(new ImageIcon(scaled));
         } catch (Exception e) {
@@ -103,33 +105,47 @@ public class IntroScreen {
         openFile.setFont(new Font("SansSerif", Font.PLAIN, 13));
         openProject.setFont(new Font("SansSerif", Font.PLAIN, 13));
         
-        openFile.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser chooser = new JFileChooser();
-                chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                if(chooser.showOpenDialog(introFrame) == JFileChooser.APPROVE_OPTION) {
-                    File file = chooser.getSelectedFile();
+        openFile.addActionListener(e -> {
+            JFileChooser chooser = new JFileChooser();
+            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            if(chooser.showOpenDialog(introFrame) == JFileChooser.APPROVE_OPTION) {
+                File file = chooser.getSelectedFile();
+                openFile.setEnabled(false);
+                openFile.setText("Opening...");
+                new Thread(() -> {
                     try {
                         String content = new String(java.nio.file.Files.readAllBytes(file.toPath()));
                         saveRecent(file.getAbsolutePath());
-                        introFrame.dispose();
-                        Nukepad editor = new Nukepad(file.getParentFile());
-                        editor.openFileInNewTab(file, content);
+                        javax.swing.SwingUtilities.invokeLater(() -> {
+                            introFrame.dispose();
+                            Nukepad editor = new Nukepad(file.getParentFile());
+                            editor.openFileInNewTab(file, content);
+                        });
                     } catch (Exception ex) {
                         ex.printStackTrace();
+                        javax.swing.SwingUtilities.invokeLater(() -> {
+                            openFile.setEnabled(true);
+                            openFile.setText("Open File");
+                        });
                     }
-                }
+                }).start();
             }
+            
         });
         openProject.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             if(chooser.showOpenDialog(introFrame) == JFileChooser.APPROVE_OPTION) {
                 File folder = chooser.getSelectedFile();
-                saveRecent(folder.getAbsolutePath());
-                introFrame.dispose();
-                new Nukepad(folder);
+                openProject.setEnabled(false);
+                openProject.setText("Opening...");
+                new Thread(() -> {
+                    saveRecent(folder.getAbsolutePath());
+                    javax.swing.SwingUtilities.invokeLater(() -> {
+                        introFrame.dispose();
+                        new Nukepad(folder);
+                    });
+                }).start();
             }
         });
         buttons.add(openFile);
@@ -220,21 +236,35 @@ public class IntroScreen {
                 saveRecent(path);
                 introFrame.dispose();
                 if(isDir) {
-                    new Nukepad(f);
-                } else {
-                    try {
-                        String content = new String(java.nio.file.Files.readAllBytes(f.toPath()));
-                        Nukepad editor = new Nukepad(f.getParentFile());
-                        editor.openFileInNewTab(f, content);
-                    } catch(Exception ex) {
-                        ex.printStackTrace();
-                    }
+                   new Thread(() -> {
+                       javax.swing.SwingUtilities.invokeLater(() -> {
+                       introFrame.dispose();
+                       new Nukepad(f);
+                   });
+                }).start();
+            } else {
+                    new Thread(() -> {
+                        try {
+                            String content = new String(java.nio.file.Files.readAllBytes(f.toPath()));
+                            javax.swing.SwingUtilities.invokeLater(() -> {
+                                introFrame.dispose();
+                                Nukepad editor = new Nukepad(f.getParentFile());
+                                editor.openFileInNewTab(f, content);
+                            });
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }).start();
                 }
+            
             }
         });
         return row;
     }
-    private void saveRecent(String path) {
+        
+            
+        
+  private void saveRecent(String path) {
         List<String> recents = loadRecents();
         recents.remove(path);
         recents.add(0, path);
@@ -274,7 +304,6 @@ public class IntroScreen {
             clip.open(audio);
             clip.start();
             
-            Thread.sleep(clip.getMicrosecondLength() / 1000);
         } catch (Exception ex) {
             System.out.println("Could not play sound: " + ex.getMessage());
         }
