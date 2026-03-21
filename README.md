@@ -1,31 +1,30 @@
-# Nukepad (alpha)
+# Nukepad (alpha) v0.1.2
 
 
 a doable text editor.
 
 
-## UPDATE LOGS:
+## UPDATES:
+
+v0.1.2:
 
 
-### Nukepad alpha v0.1.0 : 
+->Reorganized the three categories into irremovable tabs on the left
 
 
--> Updated file tree to sort the folders and files uniformly so as not to create a hot mess of files and their locations
+->Added an intro screen with chimes and functions to open files and projects
 
 
--> Added closable tabs
+->Optimized file loading (it runs 0.001% faster bro trust me)
 
 
--> Added Language-based Autocomplete && Syntax highlighting (for a limited amount of coding languages)
+->Added search function (only searches home, though)
 
 
--> Changed the "click for sex" button to "Author's signature button" which leads right to the author's github page
+->Added opening projects (although not shown, gotta add showing project structures to my todo list)
 
 
-->Sepparated the "Compile" and "Run" Buttons
-
-
-(P.S, added logo.)
+-> Buttons look more glassy
 
 
 ## ADDITIONAL INFO:
@@ -41,3 +40,4 @@ a doable text editor.
 
 
 -> If you want to actually contribute to the project, just leave a suggestion somewhere in here idk
+
