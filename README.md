@@ -6,7 +6,7 @@ a doable text editor.
 
 ## UPDATES:
 
-v0.1.2:
+### v0.1.2:
 
 
 ->Reorganized the three categories into irremovable tabs on the left
@@ -25,6 +25,24 @@ v0.1.2:
 
 
 -> Buttons look more glassy
+
+
+### v0.1.0:
+
+
+-> Updated file tree to sort the folders and files uniformly so as not to create a hot mess of files and their locations
+
+
+-> Added closable tabs
+
+
+->Added Language-based Autocomplete & Syntax highlighting (for a limited amount of coding languages though)
+
+
+->Changed the "click for sex" button to "Author's signature" button, which leads right to this repo's author's page
+
+
+-> Sepparated the "Compile" and "Run" buttons so they don't show one next to the other
 
 
 ## ADDITIONAL INFO:
