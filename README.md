@@ -49,6 +49,12 @@ It's not trying to replace your IDE (and it won't, really). It's a passion (vibe
 
 ## Updates
 
+### v0.1.3 - alpha Patch $02
+
+- Fixed loading issues by transforming part of the loading processes into lazy loading
+- Fixed the compiler producing garbage and the run button not executing properly
+
+
 ### v0.1.3 - alpha Patch $01
 
 - Changed the open.wav sound so as not to get copyright striked
