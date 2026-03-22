@@ -8,9 +8,9 @@
 
 ## What is Nukepad?
 
-Nukepad is an alpha-stage desktop text editor written in Java, built on top of the **TEDitor** architecture and progressively expanded with real features. It supports syntax highlighting, autocomplete, tabbed editing, file trees, search, and a clean intro screen — all wrapped in a Swing UI with FlatLaf theming.
+Nukepad is an alpha-stage desktop text editor written in Java, built on top of the **TEDitor** architecture and progressively expanded with real cool features. 
 
-It's not trying to replace your IDE(and it won't, really). It's a passion (vibecoded )project that's getting better and better.
+It's not trying to replace your IDE (and it won't, really). It's a passion (vibecoded) project that's getting better and better.
 
 ---
 
