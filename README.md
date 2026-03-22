@@ -44,6 +44,7 @@ It's not trying to replace your IDE (and it won't, really). It's a passion (vibe
 
 <img width="267" height="307" alt="Screenshot 2026-03-22 203306" src="https://github.com/user-attachments/assets/9215a5fa-3718-44c2-a524-748771abbc35" />
 
+<img width="1262" height="706" alt="Screenshot 2026-03-22 205222" src="https://github.com/user-attachments/assets/0dd4202f-79b3-40c8-9938-70c19757cdf0" />
 ---
 
 ## Updates
