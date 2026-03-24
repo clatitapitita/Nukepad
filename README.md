@@ -28,7 +28,7 @@ It's not trying to replace your IDE (and it won't, really). It's a passion (vibe
 - 🔔 **Intro screen** — welcome screen with chime sound and quick-open buttons
 - ✏️ **Compile & Run** — basic Java compile and run support
 - 🖨️ **Print** — print the current file directly
-- </> **Terminal** - Terminal with Problems which shows you in real time the errors from your code
+- </> **Terminal** - Terminal with Problems section which shows you in real time the errors from your code and helps you fix them
 
 ---
 ## Screenshots
