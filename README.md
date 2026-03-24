@@ -28,6 +28,7 @@ It's not trying to replace your IDE (and it won't, really). It's a passion (vibe
 - 🔔 **Intro screen** — welcome screen with chime sound and quick-open buttons
 - ✏️ **Compile & Run** — basic Java compile and run support
 - 🖨️ **Print** — print the current file directly
+- </> **Terminal** - Terminal with Problems which shows you in real time the errors from your code
 
 ---
 ## Screenshots
@@ -49,6 +50,13 @@ It's not trying to replace your IDE (and it won't, really). It's a passion (vibe
 ---
 
 ## Updates
+
+### v0.1.4 - alpha
+
+- Added terminal with live error detection
+- Made the compiler also compile code written in other programming languages 
+- Made the run button also run code written in other programming languages
+- Added button on the menu bar that opens and closes the Terminal
 
 ### v0.1.3 - alpha Patch $02
 
