@@ -10,7 +10,7 @@
 
 Nukepad is an alpha-stage desktop text editor written in Java, built on top of the **TEDitor** architecture and progressively expanded with real cool features. 
 
-It's not trying to replace your IDE (and it won't, really). It's a passion (vibecoded) project that's getting better and better.
+It's not trying to replace your IDE (and it won't, really). It's a passion project that's getting better and better.
 
 ---
 
@@ -50,6 +50,13 @@ It's not trying to replace your IDE (and it won't, really). It's a passion (vibe
 ---
 
 ## Updates
+
+### v0.1.5 - alpha
+
+- Added git integration and git functions
+- Added interactive terminal
+- Revamped Autocomplete - it works better now
+- Some more interface updates
 
 ### v0.1.4 - alpha
 

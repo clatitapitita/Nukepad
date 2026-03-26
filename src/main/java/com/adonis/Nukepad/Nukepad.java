@@ -29,8 +29,12 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
@@ -56,16 +60,12 @@ import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.tools.JavaCompiler;
-import javax.tools.ToolProvider;
 import org.fife.ui.autocomplete.AutoCompletion;
-import org.fife.ui.autocomplete.BasicCompletion;
-import org.fife.ui.autocomplete.CompletionProvider;
-import org.fife.ui.autocomplete.DefaultCompletionProvider;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -75,9 +75,13 @@ import org.fife.ui.rtextarea.RTextScrollPane;
  * @author croco
  */
 class Nukepad extends JFrame implements ActionListener{
+    private InteractiveTerminal interactiveTerminal;
+    private CombinedProvider sharedProvider;
     private JSplitPane verticalSplit;
     private boolean terminalVisible = true;
     private int lastDividerLocation = 500;
+    private GitRunner gitRunner;
+    private GitPanel gitPanel;
 
     private DefaultTreeModel openedProjectsTreeModel = new DefaultTreeModel(new DefaultMutableTreeNode("Projects"));
     public static Nukepad getInstance() {
@@ -108,12 +112,13 @@ class Nukepad extends JFrame implements ActionListener{
         text = new RSyntaxTextArea();
         text.setCodeFoldingEnabled(true);
         text.setAntiAliasingEnabled(true);
+        sharedProvider = new CombinedProvider(text);
+        AutoCompletion ac = new AutoCompletion(sharedProvider);
+        ac.setAutoActivationEnabled(true);
+        ac.setAutoActivationDelay(300);
+        ac.install(text);
         applyEditorTheme(text);
         installLiveErrorParser(text);
-        CompletionProvider provider = createCompletionProvider();
-        AutoCompletion ac = new AutoCompletion(provider);
-        ac.install(text);
-        
         RTextScrollPane scroll = new RTextScrollPane(text);
         scroll.setRowHeaderView(new LineNumberPanel(text));
         tabs.addTab("Untitled", scroll);
@@ -162,6 +167,7 @@ class Nukepad extends JFrame implements ActionListener{
                UIManager.setLookAndFeel(new FlatDarculaLaf());
                applyThemeToAllTabs();
                applyTerminalTheme();
+               interactiveTerminal.applyTheme(true);
                SwingUtilities.updateComponentTreeUI(frame);
                frame.repaint();
               
@@ -178,6 +184,7 @@ class Nukepad extends JFrame implements ActionListener{
                 UIManager.setLookAndFeel(new FlatIntelliJLaf());
                 applyThemeToAllTabs();
                 applyTerminalTheme();
+                interactiveTerminal.applyTheme(true);
                 SwingUtilities.updateComponentTreeUI(frame);
                 frame.repaint();
             } catch(Exception ex) {
@@ -211,6 +218,40 @@ class Nukepad extends JFrame implements ActionListener{
         men2.add(menit7);
         men2.add(menit8);
         
+        JMenu gitMenu = new JMenu("Git");
+        String[][] gitActions = {
+              {"Init",   "init"},
+              {"Status", "status"},
+              {"Pull",   "pull"},
+              {"Push",   "push"},
+              {"Log",    "log", "--oneline", "-20"},
+              {"Diff",   "diff"},
+                          
+        };
+        for(String[] action : gitActions) {
+            JMenuItem item = new JMenuItem(action[0]);
+            String[] args = Arrays.copyOfRange(action, 1, action.length);
+            item.addActionListener(e -> {
+                File dir = currentFile != null ? currentFile.getParentFile()
+                        : new File(System.getProperty("user.home"));
+                gitRunner.run(dir, args);
+            });
+            gitMenu.add(item);
+        }
+        
+        JMenu branchMenu = new JMenu("Branch");
+        JMenuItem newBranch = new JMenu("New branch...");
+        newBranch.addActionListener(e -> {
+            String name = JOptionPane.showInputDialog(frame, "Branch name:");
+            if (name != null && !name.isBlank())
+                gitRunner.run(currentFile != null ? currentFile.getParentFile()
+                        : new File(System.getProperty("user.home")),
+                        "checkout", "-b", name);
+        });
+        branchMenu.add(newBranch);
+        gitMenu.add(branchMenu);
+        menb.add(gitMenu);
+        
         menb.add(men1);
         menb.add(men2);
         menb.add(button1);
@@ -235,6 +276,8 @@ class Nukepad extends JFrame implements ActionListener{
                 tabs,
                 buildBottomPanel()
         );
+        gitRunner = new GitRunner(terminalArea, bottomTabs);
+        gitPanel = new GitPanel(gitRunner);
         verticalSplit.setResizeWeight(0.75);
         
         JSplitPane mainSplit = new JSplitPane (
@@ -367,6 +410,7 @@ class Nukepad extends JFrame implements ActionListener{
                 leftTabs.addTab("Search", null);
                 leftTabs.addTab("Categories", categoriesScroll);
                 leftTabs.addTab("Opened Projects", openedScroll);
+                leftTabs.addTab("Git", gitPanel);
                 leftTabs.setPreferredSize(new Dimension(280, 0));
                 return leftTabs;
                
@@ -405,8 +449,6 @@ class Nukepad extends JFrame implements ActionListener{
         
     }
     private static Nukepad instance;
-   
-    
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -637,18 +679,6 @@ class Nukepad extends JFrame implements ActionListener{
         this.currentFile = file;
     }
 
-    private CompletionProvider createCompletionProvider() {
-        DefaultCompletionProvider provider = new DefaultCompletionProvider();
-        
-        provider.addCompletion(new BasicCompletion(provider, "class"));
-        provider.addCompletion(new BasicCompletion(provider, "public"));
-        provider.addCompletion(new BasicCompletion(provider, "static"));
-        provider.addCompletion(new BasicCompletion(provider, "void"));
-        provider.addCompletion(new BasicCompletion(provider, "int"));
-        provider.addCompletion(new BasicCompletion(provider, "String"));
-
-        return provider;
-    }
     public void openFileInNewTab(File file, String content) {
         RSyntaxTextArea editor = new RSyntaxTextArea();
         editor.setCodeFoldingEnabled(true);
@@ -708,6 +738,14 @@ class Nukepad extends JFrame implements ActionListener{
                 break;
         }
         editor.setText(content);
+        CombinedProvider tabProvider = new CombinedProvider(editor);
+        tabProvider.setProjectWords(sharedProvider != null
+            ? ((CombinedProvider) sharedProvider).getProjectWords()  // see note below
+            : Collections.emptySet());
+            AutoCompletion ac = new AutoCompletion(tabProvider);
+            ac.setAutoActivationEnabled(true);
+            ac.setAutoActivationDelay(300);
+            ac.install(editor);
         
         RTextScrollPane scroll = new RTextScrollPane(editor);
         scroll.setRowHeaderView(new LineNumberPanel(editor));
@@ -939,6 +977,10 @@ class Nukepad extends JFrame implements ActionListener{
         folderNode.add(new DefaultMutableTreeNode("Loading..."));
         root.add(folderNode);
         openedProjectsTreeModel.reload(root);
+        scanProjectIntoProvider(folder, sharedProvider);
+        if(interactiveTerminal != null) {
+            interactiveTerminal.cdTo(new File(path));
+        }
     }
     
     public void setupDragAndDrop(Component target) {
@@ -1004,6 +1046,9 @@ class Nukepad extends JFrame implements ActionListener{
        });
        bottomTabs.addTab("Terminal", termScroll);
        bottomTabs.addTab("Problems", new JScrollPane(problemsTable));
+       
+       interactiveTerminal = new InteractiveTerminal();
+       bottomTabs.addTab("Shell", interactiveTerminal);
        
        JPanel wrapper = new JPanel (new BorderLayout());
        wrapper.setPreferredSize(new Dimension(0, 200));
@@ -1126,5 +1171,49 @@ class Nukepad extends JFrame implements ActionListener{
         }
     });
 }
+    private void scanProjectIntoProvider(File projectDir, CombinedProvider provider) {
+        new SwingWorker<Set<String>, Void>() {
+            @Override
+            protected Set<String> doInBackground() throws Exception {
+                Set<String> words = new HashSet<>();
+                java.util.regex.Pattern p =
+                        java.util.regex.Pattern.compile("\\\\b[a-zA-Z_][a-zA-Z0-9_]{2,}\\\\b");
+                scanDir(projectDir, p, words, 0);
+                return words;
+            }
+            private void scanDir(File dir, java.util.regex.Pattern p,
+                    Set<String> words, int depth) throws Exception {
+                if(depth > 5) return;
+                File[] files = dir.listFiles();
+                if(files == null) return;
+                for (File f : files) {
+                    if(f.isDirectory()) {
+                        scanDir(f, p, words, depth + 1);
+                    } else if (isSource(f)) {
+                        String content = new String (
+                        java.nio.file.Files.readAllBytes(f.toPath()));
+                        java.util.regex.Matcher mat = p.matcher(content);
+                        while(mat.find()) words.add(mat.group());
+                    }
+                }
+            }
+            private boolean isSource(File f) {
+                String n = f.getName();
+                 return n.endsWith(".java") || n.endsWith(".py")
+                || n.endsWith(".js")   || n.endsWith(".ts")
+                || n.endsWith(".cpp")  || n.endsWith(".c");
+                
+            }
+            @Override
+            protected void done() {
+                try {
+                    provider.setProjectWords(get());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+            
+        }.execute();
+    }   
     
 }
