@@ -112,7 +112,6 @@ It's not trying to replace your IDE (and it won't, really). It's a passion proje
 ## Additional Info
 
 - Built on top of the existing **TEDitor** architecture — parts of pre-alpha code are still present
-- Still in **alpha** — far from a release, don't expect one anytime soon
 - Want to contribute? Leave a suggestion in the discussions tab
 
 ---
