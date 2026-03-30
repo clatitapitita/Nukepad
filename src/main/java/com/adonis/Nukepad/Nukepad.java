@@ -82,6 +82,7 @@ class Nukepad extends JFrame implements ActionListener {
     private int lastDividerLocation = 500;
     private GitRunner gitRunner;
     private GitPanel gitPanel;
+    private File activeDirectory;
 
     private DefaultTreeModel openedProjectsTreeModel = new DefaultTreeModel(new DefaultMutableTreeNode("Projects"));
     private JTree fileTree;
@@ -241,7 +242,7 @@ class Nukepad extends JFrame implements ActionListener {
                 { "Init", "init" },
                 { "Status", "status" },
                 { "Pull", "pull" },
-                { "Push", "push" },
+                { "Push", "push", "--set-upstream", "origin", "HEAD" },
                 { "Log", "log", "--oneline", "-20" },
                 { "Diff", "diff" },
 
@@ -261,11 +262,16 @@ class Nukepad extends JFrame implements ActionListener {
         }
 
         JMenu branchMenu = new JMenu("Branch");
-        JMenuItem newBranch = new JMenu("New branch...");
+        JMenuItem newBranch = new JMenuItem("New branch...");
         newBranch.addActionListener(e -> {
             String name = JOptionPane.showInputDialog(frame, "Branch name:");
             if (name != null && !name.isBlank()) {
                 File dir = getSelectedDirectory();
+                if (dir == null) {
+                    JOptionPane.showMessageDialog(frame, "No directory selected. Please select a folder first.",
+                            "No Directory", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
                 gitRunner.run(dir, () -> {
                     if (gitPanel != null) {
                         gitPanel.setRepoDir(dir);
@@ -275,6 +281,61 @@ class Nukepad extends JFrame implements ActionListener {
         });
         branchMenu.add(newBranch);
         gitMenu.add(branchMenu);
+
+        JMenu remoteMenu = new JMenu("Remote");
+
+        JMenuItem addOrigin = new JMenuItem("Add Remote Origin...");
+        addOrigin.addActionListener(e -> {
+            File dir = getSelectedDirectory();
+            if (dir == null) {
+                JOptionPane.showMessageDialog(frame, "No directory selected. Please select a folder first.",
+                        "No Directory", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            String url = JOptionPane.showInputDialog(frame, "Enter remote origin URL:");
+            if (url != null && !url.isBlank()) {
+                gitRunner.run(dir, () -> {
+                    if (gitPanel != null)
+                        gitPanel.setRepoDir(dir);
+                }, "remote", "add", "origin", url.trim());
+            }
+        });
+        remoteMenu.add(addOrigin);
+
+        JMenuItem setOrigin = new JMenuItem("Set Remote Origin URL...");
+        setOrigin.addActionListener(e -> {
+            File dir = getSelectedDirectory();
+            if (dir == null) {
+                JOptionPane.showMessageDialog(frame, "No directory selected. Please select a folder first.",
+                        "No Directory", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            String url = JOptionPane.showInputDialog(frame, "Enter new remote origin URL:");
+            if (url != null && !url.isBlank()) {
+                gitRunner.run(dir, () -> {
+                    if (gitPanel != null)
+                        gitPanel.setRepoDir(dir);
+                }, "remote", "set-url", "origin", url.trim());
+            }
+        });
+        remoteMenu.add(setOrigin);
+
+        JMenuItem pushOrigin = new JMenuItem("Push to Origin");
+        pushOrigin.addActionListener(e -> {
+            File dir = getSelectedDirectory();
+            if (dir == null) {
+                JOptionPane.showMessageDialog(frame, "No directory selected. Please select a folder first.",
+                        "No Directory", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            gitRunner.run(dir, () -> {
+                if (gitPanel != null)
+                    gitPanel.setRepoDir(dir);
+            }, "push", "-u", "origin", "HEAD");
+        });
+        remoteMenu.add(pushOrigin);
+
+        gitMenu.add(remoteMenu);
         menb.add(gitMenu);
 
         menb.add(men1);
@@ -290,6 +351,20 @@ class Nukepad extends JFrame implements ActionListener {
         tabs = new JTabbedPane();
         tabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         tabs.addTab("Untitled", scroll2);
+
+        tabs.addChangeListener(e -> {
+            Component selected = tabs.getSelectedComponent();
+            if (selected instanceof javax.swing.JComponent) {
+                File file = (File) ((javax.swing.JComponent) selected).getClientProperty("file");
+                if (file != null) {
+                    currentFile = file;
+                    activeDirectory = file.getParentFile();
+                    if (gitPanel != null) {
+                        gitPanel.setRepoDir(activeDirectory);
+                    }
+                }
+            }
+        });
 
         setupDragAndDrop(tabs);
         setupDragAndDrop(scroll2);
@@ -329,9 +404,17 @@ class Nukepad extends JFrame implements ActionListener {
                 JScrollPane treeScroll = new JScrollPane(fileTree);
 
                 fileTree.addTreeSelectionListener(e -> {
-                    File dir = getSelectedDirectory();
-                    if (gitPanel != null && dir != null) {
-                        gitPanel.setRepoDir(dir);
+                    javax.swing.tree.TreePath path = e.getPath();
+                    if (path != null) {
+                        DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+                        Object userObj = node.getUserObject();
+                        if (userObj instanceof File) {
+                            File selected = (File) userObj;
+                            activeDirectory = selected.isDirectory() ? selected : selected.getParentFile();
+                            if (gitPanel != null && activeDirectory != null) {
+                                gitPanel.setRepoDir(activeDirectory);
+                            }
+                        }
                     }
                 });
 
@@ -403,9 +486,17 @@ class Nukepad extends JFrame implements ActionListener {
                     }
                 });
                 openedProjectsTree.addTreeSelectionListener(e -> {
-                    File dir = getSelectedDirectory();
-                    if (gitPanel != null && dir != null) {
-                        gitPanel.setRepoDir(dir);
+                    javax.swing.tree.TreePath path = e.getPath();
+                    if (path != null) {
+                        DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+                        Object userObj = node.getUserObject();
+                        if (userObj instanceof File) {
+                            File selected = (File) userObj;
+                            activeDirectory = selected.isDirectory() ? selected : selected.getParentFile();
+                            if (gitPanel != null && activeDirectory != null) {
+                                gitPanel.setRepoDir(activeDirectory);
+                            }
+                        }
                     }
                 });
                 JScrollPane openedScroll = new JScrollPane(openedProjectsTree);
@@ -802,6 +893,7 @@ class Nukepad extends JFrame implements ActionListener {
 
         RTextScrollPane scroll = new RTextScrollPane(editor);
         scroll.setRowHeaderView(new LineNumberPanel(editor));
+        scroll.putClientProperty("file", file);
 
         tabs.addTab(file.getName(), scroll);
         tabs.setSelectedComponent(scroll);
@@ -845,40 +937,20 @@ class Nukepad extends JFrame implements ActionListener {
     }
 
     public File getSelectedDirectory() {
-        File dir = null;
-        if (fileTree != null) {
-            javax.swing.tree.TreePath path = fileTree.getSelectionPath();
-            if (path != null) {
-                DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-                Object userObj = node.getUserObject();
-                if (userObj instanceof File) {
-                    File selected = (File) userObj;
-                    dir = selected.isDirectory() ? selected : selected.getParentFile();
-                }
-            }
+        if (activeDirectory != null) {
+            return activeDirectory;
         }
-        if (dir == null && openedProjectsTree != null) {
-            javax.swing.tree.TreePath path = openedProjectsTree.getSelectionPath();
-            if (path != null) {
-                DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-                Object userObj = node.getUserObject();
-                if (userObj instanceof File) {
-                    File selected = (File) userObj;
-                    dir = selected.isDirectory() ? selected : selected.getParentFile();
-                }
-            }
+        if (currentFile != null) {
+            return currentFile.getParentFile();
         }
-        if (dir == null) {
-            dir = currentFile != null ? currentFile.getParentFile() : new File(System.getProperty("user.home"));
-        }
-        return dir;
+        return new File(System.getProperty("user.home"));
     }
 
     private void createNewLanguageFile(String ext, String boilerplate) {
         String filename = JOptionPane.showInputDialog(frame, "Enter filename (without extension):");
         if (filename != null && !filename.trim().isEmpty()) {
             filename = filename.trim();
-            
+
             File dir = getSelectedDirectory();
 
             File newFile = new File(dir, filename + "." + ext);
