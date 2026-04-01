@@ -53,7 +53,7 @@ It's not trying to replace your IDE (and it won't, really). It's a passion proje
 
 ### v0.1.6 - alpha
 
-- This update represents the beginning of the transition towards beta, a huge chapter for nukepad.
+- This update represents the beginning of the transition towards beta, a huge upcoming chapter for Nukepad.
 - The "New" section now allows you to create a variety of files, not just .txt files
 - Made the left tabs section movable to the right or center
 - Fixed bugs with the git implementation
