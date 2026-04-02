@@ -25,7 +25,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.event.AdjustmentEvent;
 import javax.swing.SwingUtilities;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 
 /**
@@ -39,22 +38,21 @@ public class SearchPanel extends JPanel {
     private final FileIndex index = new FileIndex();
     private final JLabel statusLabel = new JLabel("Type to search...");
     private volatile boolean loading = false;
-    
-    public SearchPanel(File projectRoot){
+
+    public SearchPanel(File projectRoot) {
         setLayout(new BorderLayout(0, 6));
         setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
-        
+
         JLabel loadingLabel = new JLabel("Indexing files, please wait...");
         loadingLabel.setForeground(Color.GRAY);
-        
+
         addPlaceholder(searchField, "Search...");
-        
+
         new Thread(() -> {
-           index.init(projectRoot);
-           index.indexNextBatch(500);
-          SwingUtilities.invokeLater(() ->
-                statusLabel.setText(index.getIndexedCount() + " files indexed so far..."));
-           
+            index.init(projectRoot);
+            index.indexNextBatch(500);
+            SwingUtilities.invokeLater(() -> statusLabel.setText(index.getIndexedCount() + " files indexed so far..."));
+
         }).start();
         searchField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -64,24 +62,25 @@ public class SearchPanel extends JPanel {
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-               runSearch();
+                runSearch();
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
                 runSearch();
             }
-            
+
         });
         resultsList.setCellRenderer(new FileListRenderer());
         resultsList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) openSelected();   
+                if (e.getClickCount() == 2)
+                    openSelected();
             }
         });
         resultsList.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "open");
         resultsList.getActionMap().put("open", new AbstractAction() {
-         
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 openSelected();
@@ -90,52 +89,57 @@ public class SearchPanel extends JPanel {
         JScrollPane scrollPane = new JScrollPane(resultsList);
         scrollPane.getVerticalScrollBar().addAdjustmentListener((AdjustmentEvent e) -> {
             javax.swing.JScrollBar bar = scrollPane.getVerticalScrollBar();
-           int max = bar.getMaximum() - bar.getVisibleAmount();
-           int current = bar.getValue();
-           if (current >= max - 50 && !loading && index.hasMore()) {
-               loading = true;
-               new Thread(() -> {
-                   index.indexNextBatch(500);
-                   SwingUtilities.invokeLater(() -> {
-                       runSearch();
-                       if (!index.hasMore()) {
-                           statusLabel.setText("Index complete." + index.getIndexedCount() + "files indexed so far...");
-                           return;
-                       }
-                       else {
-                           statusLabel.setText(index.getIndexedCount() + "files indexed so far...");
-                       }
-                       loading = false;
-                   });
-               }).start();
-           }
-           
+            int max = bar.getMaximum() - bar.getVisibleAmount();
+            int current = bar.getValue();
+            if (current >= max - 50 && !loading && index.hasMore()) {
+                loading = true;
+                new Thread(() -> {
+                    index.indexNextBatch(500);
+                    SwingUtilities.invokeLater(() -> {
+                        runSearch();
+                        if (!index.hasMore()) {
+                            statusLabel
+                                    .setText("Index complete." + index.getIndexedCount() + "files indexed so far...");
+                            return;
+                        } else {
+                            statusLabel.setText(index.getIndexedCount() + "files indexed so far...");
+                        }
+                        loading = false;
+                    });
+                }).start();
+            }
+
         });
         add(searchField, BorderLayout.NORTH);
-           add(scrollPane, BorderLayout.CENTER);
-           add(statusLabel, BorderLayout.SOUTH);add(searchField, BorderLayout.NORTH);
-           add(scrollPane, BorderLayout.CENTER);
-           add(statusLabel, BorderLayout.SOUTH);
+        add(scrollPane, BorderLayout.CENTER);
+        add(statusLabel, BorderLayout.SOUTH);
+        add(searchField, BorderLayout.NORTH);
+        add(scrollPane, BorderLayout.CENTER);
+        add(statusLabel, BorderLayout.SOUTH);
     }
+
     private void runSearch() {
         String query = searchField.getText().trim();
-         if (query.isEmpty() || query.equals("Search...")) {
+        if (query.isEmpty() || query.equals("Search...")) {
             listModel.clear();
             statusLabel.setText(index.getIndexedCount() + "files indexed so far...");
             return;
-    }
+        }
         listModel.clear();
         List<String> matches = BinarySearcher.searchByPrefix(index.getSortedPaths(), query);
         System.out.println("Query: [" + query + "] Matches: " + matches.size());
         statusLabel.setText(matches.size() + "matches");
-        for (String path : matches) listModel.addElement(path);
+        for (String path : matches)
+            listModel.addElement(path);
     }
+
     private void openSelected() {
         String path = resultsList.getSelectedValue();
-        if(path == null) return;
+        if (path == null)
+            return;
         File file = new File(path);
-        
-        if(file.isDirectory()) {
+
+        if (file.isDirectory()) {
             try {
                 java.awt.Desktop.getDesktop().open(file);
             } catch (Exception ex) {
@@ -146,34 +150,36 @@ public class SearchPanel extends JPanel {
         try {
             String content = new String(java.nio.file.Files.readAllBytes(file.toPath()));
             Nukepad editor = Nukepad.getInstance();
-            if(editor != null) {
+            if (editor != null) {
                 editor.openFileInNewTab(file, content);
             }
-            
-        } catch(Exception ex) {
+
+        } catch (Exception ex) {
             System.out.println("Could not open file:" + ex.getMessage());
         }
     }
+
     public static void addPlaceholder(JTextField field, String placeholder) {
         field.setForeground(Color.GRAY);
         field.setText(placeholder);
         field.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
-                if(field.getText().equals(placeholder)) {
+                if (field.getText().equals(placeholder)) {
                     field.setText("");
                     field.setForeground(Color.BLACK);
                 }
-                
+
             }
+
             @Override
-            public void focusLost(FocusEvent e){
-                if(field.getText().isEmpty()) {
+            public void focusLost(FocusEvent e) {
+                if (field.getText().isEmpty()) {
                     field.setForeground(Color.GRAY);
                     field.setText(placeholder);
                 }
             }
         });
     }
-    
+
 }

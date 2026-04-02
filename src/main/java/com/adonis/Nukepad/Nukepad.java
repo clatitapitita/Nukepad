@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -41,13 +40,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -59,7 +56,6 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTree;
-import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
@@ -806,9 +802,6 @@ class Nukepad extends JFrame implements ActionListener {
                         terminalArea.append("ERROR: Run not supported for '." + ext2 + "' files.\n");
                         return;
                 }
-                if (pbR == null)
-                    break;
-
                 final ProcessBuilder finalPb = pbR;
                 finalPb.redirectErrorStream(true);
                 finalPb.directory(new File(classDir));
@@ -1383,6 +1376,7 @@ class Nukepad extends JFrame implements ActionListener {
 
     public void setupDragAndDrop(Component target) {
         new java.awt.dnd.DropTarget(target, new java.awt.dnd.DropTargetAdapter() {
+            @SuppressWarnings("unchecked")
             @Override
             public void drop(java.awt.dnd.DropTargetDropEvent evt) {
                 try {
@@ -1390,7 +1384,6 @@ class Nukepad extends JFrame implements ActionListener {
                     java.awt.datatransfer.Transferable transferable = evt.getTransferable();
                     java.util.List<File> files = (java.util.List<File>) transferable
                             .getTransferData(java.awt.datatransfer.DataFlavor.javaFileListFlavor);
-
                     for (File file : files) {
                         if (file.isDirectory()) {
                             addToOpenedProjects(file.getAbsolutePath());
@@ -1532,8 +1525,6 @@ class Nukepad extends JFrame implements ActionListener {
                     BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
                     Pattern pat = Pattern.compile(".+:(\\d+): (error|warning): (.+)");
                     String line;
-
-                    // Clear old problems
                     SwingUtilities.invokeLater(() -> problemsModel.setRowCount(0));
 
                     while ((line = reader.readLine()) != null) {
@@ -1542,16 +1533,12 @@ class Nukepad extends JFrame implements ActionListener {
                             int lineNum = Integer.parseInt(m.group(1));
                             String type = m.group(2);
                             String msg = m.group(3);
-
-                            // Add squiggle to editor
                             DefaultParserNotice notice = new DefaultParserNotice(
                                     this, msg, lineNum - 1);
                             notice.setLevel(type.equals("error")
                                     ? ParserNotice.Level.ERROR
                                     : ParserNotice.Level.WARNING);
                             result.addNotice(notice);
-
-                            // Add to Problems table
                             String icon = type.equals("error") ? "❌" : "⚠️";
                             final String fMsg = msg;
                             final int fLine = lineNum;
@@ -1801,7 +1788,6 @@ class Nukepad extends JFrame implements ActionListener {
                 break;
         }
         editor.setText(content);
-
         CombinedProvider tabProvider = new CombinedProvider(editor);
         tabProvider.setProjectWords(sharedProvider != null
                 ? sharedProvider.getProjectWords()
@@ -1897,12 +1883,10 @@ class Nukepad extends JFrame implements ActionListener {
     private void mergeRightTabsIntoLeft() {
         if (rightTabs == null)
             return;
-
         while (rightTabs.getTabCount() > 0) {
             String title = rightTabs.getTitleAt(0);
             Component comp = rightTabs.getComponentAt(0);
             rightTabs.removeTabAt(0);
-
             if (comp instanceof RTextScrollPane) {
                 File f = (File) ((RTextScrollPane) comp).getClientProperty("file");
                 if (f == null && title.equals("Untitled"))
@@ -1912,11 +1896,12 @@ class Nukepad extends JFrame implements ActionListener {
                     makeTabClosable(tabs, comp, title, f.getAbsolutePath());
                 } else {
                     tabs.addTab(title, comp);
-                }
+                } // john
 
-            }
+            } // james
 
-        }
-    }
+        } // jared
 
-}
+    }// jasmine
+
+}// jerry
