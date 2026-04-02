@@ -2,7 +2,7 @@
 
 <img width="160" height="220" alt="nukepadlogo" src="https://github.com/user-attachments/assets/3efb7d56-06d3-4e39-b540-cb47c4196587" />
 
-# ☢️ Nukepad
+# ☢︎ Nukepad
 
 **A no-nonsense text editor built from scratch in Java Swing — because it just works.**
 
@@ -18,7 +18,7 @@
 
 ---
 
-## 🧠 What is Nukepad?
+## <?> What is Nukepad?
 
 Nukepad is an **alpha-stage desktop text editor** written in Java, built on top of the **TEDitor** architecture and progressively expanded with real developer features.
 
@@ -26,7 +26,7 @@ It's not trying to replace your IDE — and it won't, really. It's a passion pro
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│  ☢️  N U K E P A D   –   v0.1.6 alpha               │
+│  ☢︎  N U K E P A D  ☢︎                               │
 │  ─────────────────────────────────────────────────  │
 │  🌳 File Tree  │  📄 Editor Tabs  │  ⎇ Git Panel   │
 │  🔍 Search     │  📁 Projects     │  🗂️ Categories  │
@@ -38,7 +38,7 @@ It's not trying to replace your IDE — and it won't, really. It's a passion pro
 
 ## ✨ Features
 
-### 📝 Editor
+### ✍︎ Editor
 | Feature | Details |
 |---|---|
 | **Tabbed Editing** | Multi-tab editor with scrollable tab bar — open as many files as you need, close them with the ✕ button |
@@ -49,7 +49,7 @@ It's not trying to replace your IDE — and it won't, really. It's a passion pro
 | **Live Error Parsing** | Inline error/warning annotations while you type — detected from compiler output |
 | **Anti-Aliased Rendering** | Smooth, crisp text rendering for long editing sessions |
 
-### 📁 File Management
+### 🗁 File Management
 | Feature | Details |
 |---|---|
 | **File Tree** | Lazy-loaded file system tree rooted at your home directory with file/folder icons |
@@ -60,7 +60,7 @@ It's not trying to replace your IDE — and it won't, really. It's a passion pro
 | **Drag & Drop** | Drop files directly onto the editor, tab bar, or scroll pane to open them |
 | **Save / Print** | Save and print the current document |
 
-### 🗂️ Sidebar & Navigation
+### 🔍︎ Sidebar & Navigation
 | Feature | Details |
 |---|---|
 | **Categories Panel** | Organize files into custom named groups; persisted across sessions in `~/.nukepad_categories.cfg` |
@@ -68,7 +68,7 @@ It's not trying to replace your IDE — and it won't, really. It's a passion pro
 | **Movable Sidebar** | Cycle the sidebar between **Left**, **Center**, and **Right** positions with a single button click |
 | **Tabbed Left Panel** | Files · Search · Categories · Opened Projects · Git — all in one clean pane |
 
-### 💻 Terminal & Compilation
+### </> Terminal & Compilation
 | Feature | Details |
 |---|---|
 | **Interactive Terminal** | Embedded full shell — `cmd.exe` on Windows, `zsh/bash` on Unix/Mac |
@@ -89,7 +89,7 @@ It's not trying to replace your IDE — and it won't, really. It's a passion pro
 | **Remote Management** | Add remote origin, set remote URL, push to origin |
 | **Context-Aware** | Git commands target the currently active project directory automatically |
 
-### 🎨 Themes & Appearance
+### 🖌️ Themes & Appearance
 | Feature | Details |
 |---|---|
 | **Dark Theme** | FlatDarcula with Monokai syntax theme for a rich dark coding experience |
@@ -99,26 +99,27 @@ It's not trying to replace your IDE — and it won't, really. It's a passion pro
 
 ---
 
-## 🏗️ Architecture Overview
+## 𖣂 Architecture Overview
 
 ```mermaid
 graph TD
-    A["☢️ Nukepad (main)"] --> B["🖼️ IntroScreen"]
+    J["TEDitor architecture"] --> A["☢️ Nukepad (main)"]
+    A --> B["🖼️ Intro Screen"]
     A --> C["📝 Editor – RSyntaxTextArea"]
-    A --> D["🌳 FileTree (lazy loaded)"]
-    A --> E["🔍 SearchPanel"]
-    A --> F["🗂️ CategoriesPanel (persisted)"]
-    A --> G["📁 OpenedProjectsTree"]
-    A --> H["⎇ GitPanel"]
-    A --> I["💻 InteractiveTerminal"]
-    A --> J["⚠️ ProblemsPanel"]
+    A --> D["🌳 File Tree (lazy loaded)"]
+    A --> E["🔍 Search Panel"]
+    A --> F["🗂️ Categories Panel (persisted)"]
+    A --> G["📁 Opened Projects Tree"]
+    A --> H["⎇ Git Panel"]
+    A --> I["💻 Interactive Terminal"]
+    A --> J["⚠️ Problems Panel"]
 
-    C --> K["🎨 ThemeManager"]
-    C --> L["🔡 CombinedProvider (autocomplete)"]
-    C --> M["🔢 LineNumberPanel"]
-    C --> N["🐛 LiveErrorParser"]
+    C --> K["🎨 Theme Manager"]
+    C --> L["🔡 Combined Provider (autocomplete)"]
+    C --> M["🔢 Line Number Panel"]
+    C --> N["🐛 Live Error Parser"]
 
-    H --> O["🔧 GitRunner"]
+    H --> O["🔧 Git Runner"]
     I --> P["🐚 Shell Process (cmd/bash/zsh)"]
 ```
 
@@ -143,6 +144,13 @@ graph TD
 ---
 
 ## Updates
+
+## v0.1.7 - alpha
+
+- Revamped README.md :
+    - Added architecture overview;
+    - Revamped the top section;
+- Fixed all the remaining problems;
 
 ### v0.1.6 - alpha
 
