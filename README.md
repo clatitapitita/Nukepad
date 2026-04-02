@@ -36,7 +36,7 @@ It's not trying to replace your IDE — and it won't, really. It's a passion pro
 
 ---
 
-## ✨ Features
+##  Features
 
 ### ✍︎ Editor
 | Feature | Details |
@@ -125,7 +125,7 @@ graph TD
 
 ---
 
-## 📸 Screenshots
+## Screenshots (outdated, to be updated)
 
 <img width="182" height="185" alt="Screenshot 2026-03-22 201330" src="https://github.com/user-attachments/assets/bd2cbd5d-d0f4-4edf-af97-5f1e173c0349" />
 
