@@ -1,6 +1,6 @@
 <div align="center">
 
-<img width="160" height="220" alt="nukepadlogo" src="https://github.com/user-attachments/assets/3efb7d56-06d3-4e39-b540-cb47c4196587" />
+![alt text](src/main/resources/pictures/nukepadbanner.png)
 
 # ☢︎ Nukepad
 
@@ -11,7 +11,7 @@
 [![FlatLaf](https://img.shields.io/badge/FlatLaf-FF6B6B?style=for-the-badge&logo=java&logoColor=white)](https://www.formdev.com/flatlaf/)
 [![RSyntaxTextArea](https://img.shields.io/badge/RSyntaxTextArea-6C63FF?style=for-the-badge&logo=java&logoColor=white)](https://github.com/bobbylight/RSyntaxTextArea)
 [![Version](https://img.shields.io/badge/version-0.1.7--alpha-brightgreen?style=for-the-badge)](https://gitlab.com/alexandru-andoni/Nukepad)
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue?style=for-the-badge)](./LICENSE)
+[![License](https://img.shields.io/badge/license-GNU%20GPL%20v3.0-red?style=for-the-badge)](./LICENSE)
 [![Author](https://img.shields.io/badge/author-alexandru--andoni-blueviolet?style=for-the-badge&logo=gitlab)](https://gitlab.com/alexandru-andoni)
 
 </div>
