@@ -27,25 +27,35 @@ It's not trying to replace your IDE (and it won't, really). It's a passion proje
 ## 𖣂 Architecture Overview
 
 ```mermaid
-graph TD
-    X["TEDitor architecture"] --> A["☢️ Nukepad (main)"]
-    A --> B["🖼️ Intro Screen"]
-    A --> C["📝 Editor – RSyntaxTextArea"]
-    A --> D["🌳 File Tree (lazy loaded)"]
-    A --> E["🔍 Search Panel"]
-    A --> F["🗂️ Categories Panel (persisted)"]
-    A --> G["📁 Opened Projects Tree"]
-    A --> H["⎇ Git Panel"]
-    A --> I["💻 Interactive Terminal"]
-    A --> J["⚠️ Problems Panel"]
+%%{init: {'flowchart': {'nodeSpacing': 50, 'rankSpacing': 100}, 'themeVariables': {'fontSize': '16px', 'fontFamily': 'Inter'}}}%%
+graph LR
+    subgraph Core ["Core Architecture"]
+        X["TEDitor architecture"] --> A[" Nukepad (main)"]
+    end
 
-    C --> K["🎨 Theme Manager"]
-    C --> L["🔡 Combined Provider (autocomplete)"]
-    C --> M["🔢 Line Number Panel"]
-    C --> N["🐛 Live Error Parser"]
+    subgraph UI ["🎨 User Interface"]
+        A --> B["🖼️ Intro Screen"]
+        A --> G["📁 Opened Projects Tree"]
+        A --> D["🌳 File Tree (lazy loaded)"]
+    end
 
-    H --> O["🔧 Git Runner"]
-    I --> P["🐚 Shell Process (cmd/bash/zsh)"]
+    subgraph Editor ["📝 Editing Power"]
+        A --> C["📝 Editor – RSyntaxTextArea"]
+        C --> K["🎨 Theme Manager"]
+        C --> L["🔡 Combined Provider"]
+        C --> M["🔢 Line Number Panel"]
+        C --> N["🐛 Live Error Parser"]
+    end
+
+    subgraph Tools ["🛠️ Integrated Tools"]
+        A --> E["🔍 Search Panel"]
+        A --> F["🗂️ Categories Panel"]
+        A --> H["⎇ Git Panel"]
+        H --> O["🔧 Git Runner"]
+        A --> I["💻 Interactive Terminal"]
+        I --> P["🐚 Shell Process"]
+        A --> J["⚠️ Problems Panel"]
+    end
 ```
 
 ---
