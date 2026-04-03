@@ -24,6 +24,32 @@ It's not trying to replace your IDE (and it won't, really). It's a passion proje
 
 ---
 
+## 𖣂 Architecture Overview
+
+```mermaid
+graph TD
+    X["TEDitor architecture"] --> A["☢️ Nukepad (main)"]
+    A --> B["🖼️ Intro Screen"]
+    A --> C["📝 Editor – RSyntaxTextArea"]
+    A --> D["🌳 File Tree (lazy loaded)"]
+    A --> E["🔍 Search Panel"]
+    A --> F["🗂️ Categories Panel (persisted)"]
+    A --> G["📁 Opened Projects Tree"]
+    A --> H["⎇ Git Panel"]
+    A --> I["💻 Interactive Terminal"]
+    A --> J["⚠️ Problems Panel"]
+
+    C --> K["🎨 Theme Manager"]
+    C --> L["🔡 Combined Provider (autocomplete)"]
+    C --> M["🔢 Line Number Panel"]
+    C --> N["🐛 Live Error Parser"]
+
+    H --> O["🔧 Git Runner"]
+    I --> P["🐚 Shell Process (cmd/bash/zsh)"]
+```
+
+---
+
 ##  Features
 
 ### ✍︎ Editor
@@ -84,32 +110,6 @@ It's not trying to replace your IDE (and it won't, really). It's a passion proje
 | **Light Theme** | FlatIntelliJ with IntelliJ syntax theme for a clean, bright interface |
 | **Theme Persistence** | Your choice is saved to `~/.nukepad_theme.txt` and restored on next launch |
 | **Intro Screen** | Animated welcome screen with a chime sound, quick-open buttons, and a theme toggle |
-
----
-
-## 𖣂 Architecture Overview
-
-```mermaid
-graph TD
-    X["TEDitor architecture"] --> A["☢️ Nukepad (main)"]
-    A --> B["🖼️ Intro Screen"]
-    A --> C["📝 Editor – RSyntaxTextArea"]
-    A --> D["🌳 File Tree (lazy loaded)"]
-    A --> E["🔍 Search Panel"]
-    A --> F["🗂️ Categories Panel (persisted)"]
-    A --> G["📁 Opened Projects Tree"]
-    A --> H["⎇ Git Panel"]
-    A --> I["💻 Interactive Terminal"]
-    A --> J["⚠️ Problems Panel"]
-
-    C --> K["🎨 Theme Manager"]
-    C --> L["🔡 Combined Provider (autocomplete)"]
-    C --> M["🔢 Line Number Panel"]
-    C --> N["🐛 Live Error Parser"]
-
-    H --> O["🔧 Git Runner"]
-    I --> P["🐚 Shell Process (cmd/bash/zsh)"]
-```
 
 ---
 
