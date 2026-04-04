@@ -16,6 +16,7 @@ build_job:
   stage: build
   script:
     - mvn clean package -DskipTests
+    - mv Nukepad.exe target/
   artifacts:
     paths:
       - target/*.exe
