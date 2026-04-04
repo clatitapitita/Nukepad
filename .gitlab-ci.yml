@@ -16,7 +16,6 @@ build_job:
   stage: build
   script:
     - mvn clean package -DskipTests
-    - mv Nukepad.exe target/
   artifacts:
     paths:
       - target/*.exe
@@ -49,5 +48,5 @@ create_release:
     assets:
       links:
         - name: 'Nukepad.exe'
-          url: '${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/nukepad/${CI_COMMIT_TAG}/Nukepad.exe'
+          url: '${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Nukepad/${CI_COMMIT_TAG}/Nukepad.exe'
           link_type: 'package'

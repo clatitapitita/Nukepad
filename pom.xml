@@ -63,6 +63,28 @@
                 </execution>
             </executions>
         </plugin>
+        <plugin>
+    <groupId>com.akaver.maven.plugins</groupId>
+    <artifactId>launch4j-maven-plugin</artifactId>
+    <version>2.5.2</version>
+    <executions>
+        <execution>
+            <id>l4j-gui</id>
+            <phase>package</phase>
+            <goals><goal>launch4j</goal></goals>
+            <configuration>
+                <headerType>gui</headerType>
+                <outfile>target/Nukepad.exe</outfile>
+                <jar>target/Nukepad.jar</jar> <errTitle>Nukepad</errTitle>
+                <classPath>
+                    <mainClass>com.adonis.Main</mainClass> </classPath>
+                <jre>
+                    <minVersion>17</minVersion>
+                </jre>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
     </plugins>
         
     </build>
