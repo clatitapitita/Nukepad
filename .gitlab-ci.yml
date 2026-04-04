@@ -1,14 +1,14 @@
 image: maven:3.9.14-eclipse-temurin-25
 
-variables:
+variables :
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
 
 stages:
   - build
   - upload
 
-cache:
-  paths:
+cache :
+  paths :
     - .m2/repository
 
 build_job:
@@ -20,14 +20,14 @@ build_job:
       - target/*.exe
       - target/*.jar
 
-upload_exe_to_registry:
+upload_exe_to_registry :
+  stage: upload
   stage: upload
   image: curlimages/curl:latest
   rules:
-    - if: '$CI_COMMIT_TAG'
-  script:
-    - |
+    - if: $CI_COMMIT_TAG
+  script :
+  - |
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
            --upload-file target/Nukepad.exe \
            "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/Nukepad/${CI_COMMIT_TAG}/Nukepad.exe"
-Invoke-RestMethod -Uri $uri -Method Put -Headers $headers -InFile $localFile
